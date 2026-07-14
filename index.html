@@ -80,13 +80,22 @@
     </button>
   </div>
 
-  <!-- 自作カレンダー -->
+  <!-- ★ 自作カレンダー（Safariでも100%カレンダーに見える） -->
   <div id="calendar-popup"
        class="absolute top-full left-0 mt-2 w-full bg-white border border-amber-200 rounded-xl shadow-lg p-4 hidden">
-    <input id="calendar-inner" type="date"
-           class="w-full px-3 py-2 border border-amber-200 rounded-lg">
+
+    <div class="flex justify-between items-center mb-3">
+      <button id="prev-month" class="text-amber-700 text-xl">‹</button>
+      <span id="calendar-title" class="font-medium text-amber-800"></span>
+      <button id="next-month" class="text-amber-700 text-xl">›</button>
+    </div>
+
+    <div id="calendar-grid" class="grid grid-cols-7 gap-2 text-center text-sm">
+      <!-- JSで日付を生成 -->
+    </div>
   </div>
 </div>
+
 
 
         <button type="submit"
@@ -111,19 +120,67 @@
 
 const birthdayInput = document.getElementById("guest-birthday");
 const calendarPopup = document.getElementById("calendar-popup");
-const calendarInner = document.getElementById("calendar-inner");
 const openCalendar = document.getElementById("open-calendar");
+const calendarTitle = document.getElementById("calendar-title");
+const calendarGrid = document.getElementById("calendar-grid");
+const prevMonth = document.getElementById("prev-month");
+const nextMonth = document.getElementById("next-month");
 
-// カレンダーアイコンを押したらポップアップを表示
+let current = new Date();
+
+// カレンダーを表示
 openCalendar.addEventListener("click", () => {
   calendarPopup.classList.toggle("hidden");
+  renderCalendar();
 });
 
-// 日付を選んだら入力欄に反映して閉じる
-calendarInner.addEventListener("change", () => {
-  birthdayInput.value = calendarInner.value;
+// カレンダー生成
+function renderCalendar() {
+  const year = current.getFullYear();
+  const month = current.getMonth();
+
+  calendarTitle.textContent = `${year}年 ${month + 1}月`;
+
+  calendarGrid.innerHTML = "";
+
+  const firstDay = new Date(year, month, 1).getDay();
+  const lastDate = new Date(year, month + 1, 0).getDate();
+
+  // 空白
+  for (let i = 0; i < firstDay; i++) {
+    calendarGrid.innerHTML += `<div></div>`;
+  }
+
+  // 日付
+  for (let d = 1; d <= lastDate; d++) {
+    calendarGrid.innerHTML += `
+      <button class="py-2 rounded-lg hover:bg-amber-100"
+        onclick="selectDate(${year}, ${month + 1}, ${d})">
+        ${d}
+      </button>
+    `;
+  }
+}
+
+// 日付選択
+function selectDate(y, m, d) {
+  const mm = String(m).padStart(2, "0");
+  const dd = String(d).padStart(2, "0");
+  birthdayInput.value = `${y}-${mm}-${dd}`;
   calendarPopup.classList.add("hidden");
+}
+
+// 月移動
+prevMonth.addEventListener("click", () => {
+  current.setMonth(current.getMonth() - 1);
+  renderCalendar();
 });
+
+nextMonth.addEventListener("click", () => {
+  current.setMonth(current.getMonth() + 1);
+  renderCalendar();
+});
+
 
 
     calendarPicker.addEventListener("change", () => {
