@@ -161,152 +161,151 @@
   <!-- 認証ロジック & カレンダーJS -->
   <script>
     /* -------------------------
-   認証データ
-------------------------- */
-const guests = {
-  "TEST": { birthday: "20000101", page: "messages/natsumi.html" },
-  "TEST2": { birthday: "20000101", page: "messages/mirai.html" }
-};
+       認証データ
+    ------------------------- */
+    const guests = {
+      "TEST": { birthday: "20000101", page: "messages/natsumi.html" },
+      "TEST2": { birthday: "20000101", page: "messages/mirai.html" }
+    };
 
-/* -------------------------
-   カレンダーUI
-------------------------- */
-const birthdayInput = document.getElementById("guest-birthday");
-const calendarPopup = document.getElementById("calendar-popup");
-const calendarGrid = document.getElementById("calendar-grid");
-const calendarTitle = document.getElementById("calendar-title");
-const openCalendar = document.getElementById("open-calendar");
-const prevMonth = document.getElementById("prev-month");
-const nextMonth = document.getElementById("next-month");
-const yearSelect = document.getElementById("year-select");
+    /* -------------------------
+       カレンダーUI
+    ------------------------- */
+    const birthdayInput = document.getElementById("guest-birthday");
+    const calendarPopup = document.getElementById("calendar-popup");
+    const calendarGrid = document.getElementById("calendar-grid");
+    const calendarTitle = document.getElementById("calendar-title");
+    const openCalendar = document.getElementById("open-calendar");
+    const prevMonth = document.getElementById("prev-month");
+    const nextMonth = document.getElementById("next-month");
+    const yearSelect = document.getElementById("year-select");
 
-let current = new Date(2000, 0, 1);
+    let current = new Date();
 
-/* 年選択の初期化 */
-function initYearSelect() {
-  if (yearSelect.children.length === 0) {
-    for (let y = 1900; y <= 2100; y++) {
-      const opt = document.createElement("option");
-      opt.value = y;
-      opt.textContent = y;
-      yearSelect.appendChild(opt);
+    /* 年選択の初期化 */
+    function initYearSelect() {
+      if (yearSelect.children.length === 0) {
+        for (let y = 1950; y <= 2050; y++) {
+          const opt = document.createElement("option");
+          opt.value = y;
+          opt.textContent = y;
+          yearSelect.appendChild(opt);
+        }
+      }
+      yearSelect.value = current.getFullYear();
     }
-  }
-  yearSelect.value = current.getFullYear();
-}
 
-/* カレンダー表示 */
-openCalendar.addEventListener("click", (e) => {
-  e.stopPropagation();
-  calendarPopup.classList.toggle("hidden");
-  initYearSelect();
-  renderCalendar();
-});
+    /* カレンダー表示 */
+    openCalendar.addEventListener("click", (e) => {
+      e.stopPropagation();
+      calendarPopup.classList.toggle("hidden");
+      initYearSelect();
+      renderCalendar();
+    });
 
-/* カレンダー内クリックは閉じない */
-calendarPopup.addEventListener("click", (e) => {
-  e.stopPropagation();
-});
+    /* カレンダー内クリックは閉じない */
+    calendarPopup.addEventListener("click", (e) => {
+      e.stopPropagation();
+    });
 
-/* カレンダー外クリックで閉じる */
-document.addEventListener("click", (e) => {
-  if (calendarPopup.contains(e.target) || e.target === openCalendar) return;
-  calendarPopup.classList.add("hidden");
-});
+    /* カレンダー外クリックで閉じる */
+    document.addEventListener("pointerdown", (e) => {
+      if (calendarPopup.contains(e.target) || e.target === openCalendar) return;
+      calendarPopup.classList.add("hidden");
+    });
 
-/* カレンダー生成 */
-function renderCalendar() {
-  const year = parseInt(yearSelect.value);
-  const month = current.getMonth();
+    /* カレンダー生成 */
+    function renderCalendar() {
+      const year = parseInt(yearSelect.value);
+      const month = current.getMonth();
 
-  calendarTitle.textContent = `${month + 1}月`;
-  calendarGrid.innerHTML = "";
+      calendarTitle.textContent = `${month + 1}月`;
+      calendarGrid.innerHTML = "";
 
-  const firstDay = new Date(year, month, 1).getDay();
-  const lastDate = new Date(year, month + 1, 0).getDate();
+      const firstDay = new Date(year, month, 1).getDay();
+      const lastDate = new Date(year, month + 1, 0).getDate();
 
-  for (let i = 0; i < firstDay; i++) {
-    calendarGrid.innerHTML += `<div></div>`;
-  }
+      for (let i = 0; i < firstDay; i++) {
+        calendarGrid.innerHTML += `<div></div>`;
+      }
 
-  for (let d = 1; d <= lastDate; d++) {
-    calendarGrid.innerHTML += `
-      <button
-        class="py-2 rounded-lg hover:bg-amber-100"
-        onclick="selectDate(${year}, ${month + 1}, ${d})"
-      >
-        ${d}
-      </button>
-    `;
-  }
-}
+      for (let d = 1; d <= lastDate; d++) {
+        calendarGrid.innerHTML += `
+          <button
+            class="py-2 rounded-lg hover:bg-amber-100"
+            onclick="selectDate(${year}, ${month + 1}, ${d})"
+          >
+            ${d}
+          </button>
+        `;
+      }
+    }
 
-/* ★ フォーム誤タップ防止 */
-function temporarilyDisableForm() {
-  const form = document.getElementById("guest-form");
-  form.style.pointerEvents = "none";
-  setTimeout(() => {
-    form.style.pointerEvents = "auto";
-  }, 150);
-}
+    /* ★ フォーム誤タップ防止 */
+    function temporarilyDisableForm() {
+      const form = document.getElementById("guest-form");
+      form.style.pointerEvents = "none";
+      setTimeout(() => {
+        form.style.pointerEvents = "auto";
+      }, 150);
+    }
 
-/* ★ 日付選択（誤タップ防止入り） */
-function selectDate(y, m, d) {
-  const mm = String(m).padStart(2, "0");
-  const dd = String(d).padStart(2, "0");
-  birthdayInput.value = `${y}-${mm}-${dd}`;
+    /* ★ 日付選択（誤タップ防止入り） */
+    function selectDate(y, m, d) {
+      const mm = String(m).padStart(2, "0");
+      const dd = String(d).padStart(2, "0");
+      birthdayInput.value = `${y}-${mm}-${dd}`;
 
-  // タッチ貫通防止
-  calendarPopup.style.pointerEvents = "none";
-  temporarilyDisableForm();
+      calendarPopup.style.pointerEvents = "none";
+      temporarilyDisableForm();
 
-  calendarPopup.classList.add("hidden");
+      calendarPopup.classList.add("hidden");
 
-  setTimeout(() => {
-    calendarPopup.style.pointerEvents = "auto";
-  }, 150);
-}
+      setTimeout(() => {
+        calendarPopup.style.pointerEvents = "auto";
+      }, 150);
+    }
 
-/* 月移動 */
-prevMonth.addEventListener("click", (e) => {
-  e.stopPropagation();
-  current.setMonth(current.getMonth() - 1);
-  yearSelect.value = current.getFullYear();
-  renderCalendar();
-});
+    /* 月移動 */
+    prevMonth.addEventListener("click", (e) => {
+      e.stopPropagation();
+      current.setMonth(current.getMonth() - 1);
+      yearSelect.value = current.getFullYear();
+      renderCalendar();
+    });
 
-nextMonth.addEventListener("click", (e) => {
-  e.stopPropagation();
-  current.setMonth(current.getMonth() + 1);
-  yearSelect.value = current.getFullYear();
-  renderCalendar();
-});
+    nextMonth.addEventListener("click", (e) => {
+      e.stopPropagation();
+      current.setMonth(current.getMonth() + 1);
+      yearSelect.value = current.getFullYear();
+      renderCalendar();
+    });
 
-/* 年変更 */
-yearSelect.addEventListener("change", (e) => {
-  e.stopPropagation();
-  current.setFullYear(parseInt(yearSelect.value));
-  renderCalendar();
-});
+    /* 年変更 */
+    yearSelect.addEventListener("change", (e) => {
+      e.stopPropagation();
+      current.setFullYear(parseInt(yearSelect.value));
+      renderCalendar();
+    });
 
-/* -------------------------
-   認証処理
-------------------------- */
-document.getElementById('guest-form').addEventListener('submit', function(e) {
-  e.preventDefault();
+    /* -------------------------
+       認証処理
+    ------------------------- */
+    document.getElementById("guest-form").addEventListener("submit", function(e) {
+      e.preventDefault();
 
-  const name = document.getElementById('guest-name').value.trim();
-  const birthdayRaw = birthdayInput.value;
-  const error = document.getElementById('error');
+      const name = document.getElementById("guest-name").value.trim();
+      const birthdayRaw = birthdayInput.value;
+      const error = document.getElementById("error");
 
-  const birthday = birthdayRaw.replaceAll("-", "");
+      const birthday = birthdayRaw.replaceAll("-", "");
 
-  if (guests[name] && guests[name].birthday === birthday) {
-    window.location.href = guests[name].page;
-  } else {
-    error.textContent = "認証に失敗しました。入力内容をご確認ください。";
-  }
-});
+      if (guests[name] && guests[name].birthday === birthday) {
+        window.location.href = guests[name].page;
+      } else {
+        error.textContent = "認証に失敗しました。入力内容をご確認ください。";
+      }
+    });
   </script>
 
 </body>
