@@ -68,23 +68,26 @@
                  placeholder="お名前を入力してください">
         </div>
 
-        <!-- カレンダーアイコン付き誕生日入力 -->
-        <div class="relative">
-          <label class="block mb-1 text-amber-700 font-medium text-sm">お誕生日</label>
+<div class="relative">
+  <label class="block mb-1 text-amber-700 font-medium">お誕生日</label>
 
-          <div class="flex items-center w-full px-4 py-3 rounded-xl border border-amber-200 bg-white">
-            <input id="guest-birthday" type="text"
-              placeholder="誕生日（YYYY-MM-DD）"
-              class="w-full focus:outline-none text-base">
-            <button id="open-calendar" type="button" class="ml-3 text-amber-600 text-2xl">
-              📅
-            </button>
-          </div>
+  <div class="flex items-center w-full px-4 py-3 rounded-xl border border-amber-200 bg-white">
+    <input id="guest-birthday" type="text"
+      placeholder="誕生日（YYYY-MM-DD）"
+      class="w-full focus:outline-none">
+    <button id="open-calendar" type="button" class="ml-2 text-amber-600 text-xl">
+      📅
+    </button>
+  </div>
 
-          <!-- 実際の date ピッカー（隠して使う） -->
-          <input id="calendar-picker" type="date"
-            class="absolute top-full left-0 mt-2 w-full px-4 py-3 rounded-xl border border-amber-200 bg-white shadow-lg hidden">
-        </div>
+  <!-- 自作カレンダー -->
+  <div id="calendar-popup"
+       class="absolute top-full left-0 mt-2 w-full bg-white border border-amber-200 rounded-xl shadow-lg p-4 hidden">
+    <input id="calendar-inner" type="date"
+           class="w-full px-3 py-2 border border-amber-200 rounded-lg">
+  </div>
+</div>
+
 
         <button type="submit"
                 class="w-full py-3 rounded-xl font-medium mt-2 text-white text-base sm:text-lg"
@@ -106,22 +109,22 @@
       "山田花子": { birthday: "19950512", page: "messages/hanako.html" }
     };
 
-    // ▼ スマホ対応カレンダーUI
-    const birthdayInput = document.getElementById("guest-birthday");
-    const calendarPicker = document.getElementById("calendar-picker");
-    const openCalendar = document.getElementById("open-calendar");
+const birthdayInput = document.getElementById("guest-birthday");
+const calendarPopup = document.getElementById("calendar-popup");
+const calendarInner = document.getElementById("calendar-inner");
+const openCalendar = document.getElementById("open-calendar");
 
-    openCalendar.addEventListener("click", () => {
-      calendarPicker.classList.remove("hidden");
+// カレンダーアイコンを押したらポップアップを表示
+openCalendar.addEventListener("click", () => {
+  calendarPopup.classList.toggle("hidden");
+});
 
-      // スマホ向け（Safari/Android）
-      calendarPicker.click();
+// 日付を選んだら入力欄に反映して閉じる
+calendarInner.addEventListener("change", () => {
+  birthdayInput.value = calendarInner.value;
+  calendarPopup.classList.add("hidden");
+});
 
-      // PC向け
-      if (calendarPicker.showPicker) {
-        calendarPicker.showPicker();
-      }
-    });
 
     calendarPicker.addEventListener("change", () => {
       birthdayInput.value = calendarPicker.value;
