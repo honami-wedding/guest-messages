@@ -125,32 +125,49 @@ const calendarTitle = document.getElementById("calendar-title");
 const openCalendar = document.getElementById("open-calendar");
 const prevMonth = document.getElementById("prev-month");
 const nextMonth = document.getElementById("next-month");
+const yearSelect = document.getElementById("year-select");
 
 let current = new Date();
 
 // カレンダー表示
 openCalendar.addEventListener("click", (e) => {
-  e.stopPropagation(); // ★ Safari対策：外側クリック扱いを防ぐ
+  e.stopPropagation();
   calendarPopup.classList.toggle("hidden");
+  initYearSelect();
   renderCalendar();
 });
 
-// ★ カレンダー内のクリックは閉じない
+// ★ カレンダー内のクリックは閉じない（最重要）
 calendarPopup.addEventListener("click", (e) => {
   e.stopPropagation();
 });
 
-// ★ カレンダー外をタップしたら閉じる
-document.addEventListener("click", () => {
+// ★ カレンダー外をタップした時だけ閉じる
+document.addEventListener("click", (e) => {
+  // カレンダー内なら閉じない
+  if (calendarPopup.contains(e.target) || e.target === openCalendar) return;
   calendarPopup.classList.add("hidden");
 });
 
+// 年選択の初期化
+function initYearSelect() {
+  if (yearSelect.children.length === 0) {
+    for (let y = 1900; y <= 2100; y++) {
+      const opt = document.createElement("option");
+      opt.value = y;
+      opt.textContent = y;
+      yearSelect.appendChild(opt);
+    }
+  }
+  yearSelect.value = current.getFullYear();
+}
+
 // カレンダー生成
 function renderCalendar() {
-  const year = current.getFullYear();
+  const year = parseInt(yearSelect.value);
   const month = current.getMonth();
 
-  calendarTitle.textContent = `${year}年 ${month + 1}月`;
+  calendarTitle.textContent = `${month + 1}月`;
   calendarGrid.innerHTML = "";
 
   const firstDay = new Date(year, month, 1).getDay();
@@ -180,25 +197,25 @@ function selectDate(y, m, d) {
   calendarPopup.classList.add("hidden");
 }
 
-// 月移動
+// ★ 月移動（閉じないように stopPropagation）
 prevMonth.addEventListener("click", (e) => {
-  e.stopPropagation(); // ★ Safari対策
+  e.stopPropagation();
   current.setMonth(current.getMonth() - 1);
   renderCalendar();
 });
 
 nextMonth.addEventListener("click", (e) => {
-  e.stopPropagation(); // ★ Safari対策
+  e.stopPropagation();
   current.setMonth(current.getMonth() + 1);
   renderCalendar();
 });
 
-
-
-    calendarPicker.addEventListener("change", () => {
-      birthdayInput.value = calendarPicker.value;
-      calendarPicker.classList.add("hidden");
-    });
+// ★ 年変更（閉じない）
+yearSelect.addEventListener("change", (e) => {
+  e.stopPropagation();
+  current.setFullYear(parseInt(yearSelect.value));
+  renderCalendar();
+});
 
     // ▼ 認証処理
     document.getElementById('guest-form').addEventListener('submit', function(e) {
