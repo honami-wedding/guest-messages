@@ -27,11 +27,7 @@
 
   <!-- Hero Section -->
   <section class="relative w-full h-[45vh] sm:h-[50vh] overflow-hidden">
-    <img
-      class="absolute inset-0 w-full h-full object-cover"
-      src="images/sky1.jpg"
-      alt="Blue hydrangeas elegantly arranged in a white vase"
-    >
+    <img class="absolute inset-0 w-full h-full object-cover" src="images/sky1.jpg">
     <div class="absolute inset-0 bg-gradient-to-b from-transparent via-white/40 to-white"></div>
   </section>
 
@@ -39,9 +35,7 @@
   <div class="max-w-xl mx-auto px-5 -mt-14 relative z-10 text-center pb-16">
 
     <h1 class="mb-1 text-[28px] sm:text-[32px] text-sky-900">Rintaro & Honami</h1>
-    <p class="tracking-[0.25em] mb-6 text-sky-600 font-medium text-sm sm:text-base">
-      2026.10.11
-    </p>
+    <p class="tracking-[0.25em] mb-6 text-sky-600 font-medium text-sm sm:text-base">2026.10.11</p>
 
     <p class="leading-relaxed mb-10 text-sky-900 text-[15px] sm:text-[16px]">
       本日は私たちの結婚式にご参列いただき<br>
@@ -54,36 +48,262 @@
 
     <!-- 丸写真 -->
     <div class="flex justify-center mb-10">
-      <img
-        class="w-32 h-32 sm:w-40 sm:h-40 object-cover rounded-full photo-frame"
-        src="images/couple2.jpg"
-        alt="Couple photo"
-      >
+      <img class="w-32 h-32 sm:w-40 sm:h-40 object-cover rounded-full photo-frame" src="images/couple2.jpg">
     </div>
 
     <!-- 認証フォーム -->
-    <section
-      class="py-8 px-6 rounded-3xl mb-10 shadow-md"
-      style="background: linear-gradient(135deg, rgb(219, 234, 254), rgb(240, 249, 255));"
-    >
+    <section class="py-8 px-6 rounded-3xl mb-10 shadow-md"
+      style="background: linear-gradient(135deg, rgb(219,234,254), rgb(240,249,255));">
 
-      <h2 class="mb-6 text-[20px] sm:text-[22px] font-bold text-sky-900">
-        ゲストの皆様へメッセージ
-      </h2>
+      <h2 class="mb-6 text-[20px] sm:text-[22px] font-bold text-sky-900">ゲストの皆様へメッセージ</h2>
 
       <form id="guest-form" class="space-y-5 text-left">
 
         <!-- 名前 -->
         <div>
           <label class="block mb-1 text-sky-800 font-medium text-sm">お名前</label>
-          <input
-            id="guest-name"
-            type="text"
+          <input id="guest-name" type="text"
             class="w-full px-4 py-3 rounded-xl border border-sky-200 focus:ring-2 focus:ring-sky-300 text-base"
-            placeholder="お名前はスペースなし（例：奥倫太郎）でご記入ください"
-          >
+            placeholder="お名前はスペースなし（例：奥倫太郎）でご記入ください">
         </div>
 
         <!-- 誕生日（MM-DD） -->
         <div class="relative">
-          <label class="block mb-1 text-sky-800 font-medium text-sm">
+          <label class="block mb-1 text-sky-800 font-medium text-sm">お誕生日</label>
+
+          <div class="flex items-center w-full px-4 py-3 rounded-xl border border-sky-200 bg-white">
+            <input id="guest-birthday" type="text" placeholder="誕生日（MM-DD）"
+              class="w-full focus:outline-none text-base">
+            <button id="open-calendar" type="button" class="ml-3 text-sky-600 text-2xl">📅</button>
+          </div>
+
+          <!-- カレンダー（月日だけ） -->
+          <div id="calendar-popup"
+            class="absolute top-full left-0 mt-2 w-full bg-white border border-sky-200 rounded-xl shadow-lg p-4 hidden">
+
+            <div class="flex items-center justify-between mb-3">
+              <span id="calendar-title" class="font-medium text-sky-800"></span>
+
+              <div class="flex gap-4">
+                <button id="prev-month" class="text-sky-700 text-2xl px-3 py-1 rounded-lg hover:bg-sky-100">‹</button>
+                <button id="next-month" class="text-sky-700 text-2xl px-3 py-1 rounded-lg hover:bg-sky-100">›</button>
+              </div>
+            </div>
+
+            <div id="calendar-grid" class="grid grid-cols-7 gap-2 text-center text-sm"></div>
+
+          </div>
+        </div>
+
+        <button type="submit"
+          class="w-full py-3 rounded-xl font-medium mt-2 text-white text-base sm:text-lg"
+          style="background: linear-gradient(135deg, #7CC6FF, #B3DDFF);">
+          メッセージを受け取る 🌼
+        </button>
+
+        <p id="error" class="text-red-600 text-center mt-2 text-sm"></p>
+
+      </form>
+    </section>
+
+  </div>
+
+  <!-- JS -->
+  <script>
+
+    /* 下の名前ローマ字ファイル名＋MMDD形式 */
+    const guests = {
+      "池田朱里": { birthday: "0105", page: "messages/akari.html" },
+      "仲谷実咲": { birthday: "0902", page: "messages/misaki.html" },
+      "荒川結依": { birthday: "0621", page: "messages/yui.html" },
+      "田嶋洋一": { birthday: "1022", page: "messages/yoichi.html" },
+      "田嶋嘉子": { birthday: "0524", page: "messages/yoshiko.html" },
+      "竹内大貴": { birthday: "0122", page: "messages/daiki.html" },
+      "加藤美那": { birthday: "0223", page: "messages/mina.html" },
+      "小泉彩菜": { birthday: "0306", page: "messages/ayana.html" },
+      "村松美里": { birthday: "0715", page: "messages/misato.html" },
+      "久保寺涼太": { birthday: "1001", page: "messages/ryota.html" },
+      "保延朱音": { birthday: "0822", page: "messages/akane.html" },
+      "黒川莉未菜": { birthday: "0723", page: "messages/rimina.html" },
+      "高橋紗彩": { birthday: "0514", page: "messages/saaya.html" },
+      "保立海南江": { birthday: "0608", page: "messages/minae.html" },
+      "中野妃香梨": { birthday: "1008", page: "messages/hikari.html" },
+      "岡本千尋": { birthday: "0907", page: "messages/chihiro.html" },
+      "山澤生樹": { birthday: "0316", page: "messages/ikiki.html" },
+      "佐々木美里": { birthday: "0514", page: "messages/misato.html" },
+      "下地楓": { birthday: "1001", page: "messages/kaede.html" },
+      "大和想来": { birthday: "1125", page: "messages/sora.html" },
+      "小出愛菜": { birthday: "0308", page: "messages/aina.html" },
+      "橋戸彩": { birthday: "0507", page: "messages/aya.html" },
+      "小林明日香": { birthday: "0731", page: "messages/asuka.html" },
+      "山下奈津実": { birthday: "0125", page: "messages/natsumi.html" },
+      "菅原奈美": { birthday: "0501", page: "messages/nami.html" },
+      "土屋未来": { birthday: "0116", page: "messages/mirai.html" },
+      "大島聡恵": { birthday: "1205", page: "messages/satoe.html" },
+      "望月実環": { birthday: "0902", page: "messages/miwa.html" },
+      "小林満月": { birthday: "1116", page: "messages/mitsuki.html" },
+      "濵田礼香": { birthday: "0318", page: "messages/ayaka.html" },
+      "濵田悦子": { birthday: "0423", page: "messages/etsuko.html" },
+      "濵田鈴美": { birthday: "0330", page: "messages/suzumi.html" },
+      "濵田康義": { birthday: "1119", page: "messages/yasuyoshi.html" },
+      "柿澤清": { birthday: "0801", page: "messages/kiyoshi.html" },
+      "柿澤美恵子": { birthday: "0427", page: "messages/mieko.html" },
+      "藤田真奈": { birthday: "0111", page: "messages/mana.html" },
+      "宮下百々香": { birthday: "0320", page: "messages/momoka.html" },
+      "井出雪乃": { birthday: "0208", page: "messages/yukino.html" },
+      "長峰由樹": { birthday: "0910", page: "messages/yuki.html" },
+      "安島里美": { birthday: "0106", page: "messages/satomi.html" },
+      "清水麻帆": { birthday: "0626", page: "messages/maho.html" },
+      "宮崎朋彦": { birthday: "1127", page: "messages/tomohiko.html" },
+      "宮崎啓子": { birthday: "0730", page: "messages/keiko.html" },
+      "宮武那奈": { birthday: "0919", page: "messages/nana.html" },
+      "三浦郁美": { birthday: "0512", page: "messages/ikumi.html" },
+      "林祐太郎": { birthday: "0506", page: "messages/yutaro.html" },
+      "渡合広明": { birthday: "0505", page: "messages/hiroaki.html" },
+      "加藤真也": { birthday: "0803", page: "messages/shinya.html" },
+      "川城修平": { birthday: "0509", page: "messages/shuhei.html" },
+      "小川大輔": { birthday: "0626", page: "messages/daisuke.html" },
+      "蛯名嶺蘭": { birthday: "0810", page: "messages/reiran.html" },
+      "藤原知洋": { birthday: "0902", page: "messages/tomohiro.html" },
+      "鵜澤雄也": { birthday: "0906", page: "messages/yuya.html" },
+      "二通武史": { birthday: "0515", page: "messages/takeshi.html" },
+      "川村謙介": { birthday: "0422", page: "messages/kensuke.html" },
+      "若山和磨": { birthday: "1030", page: "messages/kazuma.html" },
+      "竹大誠人": { birthday: "0630", page: "messages/makoto.html" },
+      "千葉陸斗": { birthday: "1009", page: "messages/rikuto.html" },
+      "山口晃": { birthday: "0806", page: "messages/akira.html" },
+      "山野辺翔": { birthday: "1002", page: "messages/sho.html" },
+      "室井優斗": { birthday: "0106", page: "messages/yuto.html" },
+      "中野航": { birthday: "0216", page: "messages/wataru.html" },
+      "近藤春輝": { birthday: "0310", page: "messages/haruki.html" },
+      "菊池蓮": { birthday: "1102", page: "messages/ren.html" },
+      "金川彩香": { birthday: "0629", page: "messages/ayaka.html" },
+      "酒井ひなた": { birthday: "0612", page: "messages/hinata.html" },
+      "足立渉": { birthday: "0628", page: "messages/wataru.html" },
+      "山口大希": { birthday: "0625", page: "messages/daiki.html" },
+      "権田敦大": { birthday: "0320", page: "messages/atsushi.html" },
+      "並木雅人": { birthday: "1229", page: "messages/masato.html" },
+      "佐藤究人": { birthday: "0402", page: "messages/kyuto.html" },
+      "塩澤昂弥": { birthday: "0225", page: "messages/koya.html" },
+      "甲斐真実": { birthday: "0407", page: "messages/mami.html" },
+      "柴田和奏": { birthday: "1031", page: "messages/wakana.html" },
+      "澤田晋兵": { birthday: "0626", page: "messages/shinpei.html" },
+      "澤田晃兵": { birthday: "0626", page: "messages/kohei.html" },
+      "永石和衡": { birthday: "1020", page: "messages/kazuhiro.html" },
+      "川原田大起": { birthday: "0712", page: "messages/daiki.html" },
+      "岩村岳": { birthday: "0530", page: "messages/gaku.html" },
+      "渡邉祐史": { birthday: "0722", page: "messages/yushi.html" },
+      "齋藤岳": { birthday: "0629", page: "messages/gaku.html" },
+      "長谷川遼": { birthday: "0613", page: "messages/ryo.html" },
+      "長谷川真奈美": { birthday: "0913", page: "messages/manami.html" },
+      "千葉安我士": { birthday: "0823", page: "messages/agashi.html" },
+      "千葉果奈": { birthday: "0522", page: "messages/kana.html" },
+      "髙塚雅也": { birthday: "0326", page: "messages/masaya.html" },
+      "髙塚綾香": { birthday: "0514", page: "messages/ayaka.html" },
+      "奥健太郎": { birthday: "0408", page: "messages/kentaro.html" },
+      "奥彩香": { birthday: "0929", page: "messages/ayaka.html" },
+      "奥昌乃": { birthday: "0710", page: "messages/masano.html" },
+      "奥俊宏": { birthday: "0106", page: "messages/toshihiro.html" },
+      "稲垣浩": { birthday: "0427", page: "messages/hiroshi.html" },
+      "稲垣由美子": { birthday: "1128", page: "messages/yumiko.html" },
+      "稲垣悟": { birthday: "0527", page: "messages/satoru.html" },
+      "稲垣岳": { birthday: "0217", page: "messages/gaku.html" },
+      "稲垣瑠里子": { birthday: "1224", page: "messages/ruriko.html" }
+    };
+
+    const birthdayInput = document.getElementById("guest-birthday");
+    const calendarPopup = document.getElementById("calendar-popup");
+    const calendarGrid = document.getElementById("calendar-grid");
+    const calendarTitle = document.getElementById("calendar-title");
+    const openCalendar = document.getElementById("open-calendar");
+    const prevMonth = document.getElementById("prev-month");
+    const nextMonth = document.getElementById("next-month");
+
+    let current = new Date(2000, 0, 1);
+
+    /* カレンダー開閉 */
+    openCalendar.addEventListener("click", (e) => {
+      e.stopPropagation();
+      calendarPopup.classList.toggle("hidden");
+      renderCalendar();
+    });
+
+    /* カレンダー内クリックは閉じない */
+    calendarPopup.addEventListener("click", (e) => {
+      e.stopPropagation();
+    });
+
+    /* 外をクリックしたら閉じる */
+    document.addEventListener("pointerdown", (e) => {
+      if (calendarPopup.contains(e.target) || e.target === openCalendar) return;
+      calendarPopup.classList.add("hidden");
+    });
+
+    /* カレンダー描画 */
+    function renderCalendar() {
+      const year = 2000; // 年は固定
+      const month = current.getMonth();
+
+      calendarTitle.textContent = `${month + 1}月`;
+      calendarGrid.innerHTML = "";
+
+      const firstDay = new Date(year, month, 1).getDay();
+      const lastDate = new Date(year, month + 1, 0).getDate();
+
+      for (let i = 0; i < firstDay; i++) {
+        calendarGrid.innerHTML += `<div></div>`;
+      }
+
+      for (let d = 1; d <= lastDate; d++) {
+        calendarGrid.innerHTML += `
+          <button class="py-2 rounded-lg hover:bg-sky-100"
+            onclick="selectDate(${month + 1}, ${d})">
+            ${d}
+          </button>
+        `;
+      }
+    }
+
+    /* 日付選択 */
+    function selectDate(m, d) {
+      const mm = String(m).padStart(2, "0");
+      const dd = String(d).padStart(2, "0");
+
+      birthdayInput.value = `${mm}-${dd}`;
+      calendarPopup.classList.add("hidden");
+    }
+
+    /* 月移動 */
+    prevMonth.addEventListener("click", (e) => {
+      e.stopPropagation();
+      current.setMonth(current.getMonth() - 1);
+      renderCalendar();
+    });
+
+    nextMonth.addEventListener("click", (e) => {
+      e.stopPropagation();
+      current.setMonth(current.getMonth() + 1);
+      renderCalendar();
+    });
+
+    /* 認証処理 */
+    document.getElementById("guest-form").addEventListener("submit", function(e) {
+      e.preventDefault();
+
+      const name = document.getElementById("guest-name").value.trim();
+      const birthdayRaw = birthdayInput.value;
+      const error = document.getElementById("error");
+
+      const birthday = birthdayRaw.replaceAll("-", ""); // mmdd
+
+      if (guests[name] && guests[name].birthday === birthday) {
+        window.location.href = guests[name].page;
+      } else {
+        error.textContent = "認証に失敗しました。入力内容をご確認ください。";
+      }
+    });
+
+  </script>
+
+</body>
+</html>
